@@ -44,7 +44,7 @@ variable "environment" {
 variable "project" {
   description = "Short project name, used as a prefix for AWS resource names"
   type        = string
-  default     = "tfproject"
+  default     = "terraform_project"
 
   validation {
     condition     = can(regex("^[a-z0-9-]+$", var.project))
