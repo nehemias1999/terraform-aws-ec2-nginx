@@ -37,11 +37,11 @@ data "aws_ami" "al2023" {
 # Security group + rules (each rule as a separate resource)
 # ---------------------------------------------------------------------------
 resource "aws_security_group" "nginx_sg" {
-  name        = "${local.names.nginx_server_sg}"
+  name        = local.names.nginx_server_sg
   description = "SSH and HTTP for the nginx server"
 
   tags = {
-    Name = "${local.names.nginx_server_sg}"
+    Name = local.names.nginx_server_sg
   }
 }
 
@@ -54,7 +54,7 @@ resource "aws_vpc_security_group_ingress_rule" "nginx_sg_in_ssh" {
   ip_protocol       = "tcp"
 
   tags = {
-    Name = "${local.names.nginx_server_sg_ingress_ssh}"
+    Name = local.names.nginx_server_sg_ingress_ssh
   }
 }
 
@@ -67,7 +67,7 @@ resource "aws_vpc_security_group_ingress_rule" "nginx_sg_in_http" {
   ip_protocol       = "tcp"
 
   tags = {
-    Name = "${local.names.nginx_server_sg_ingress_http}"
+    Name = local.names.nginx_server_sg_ingress_http
   }
 }
 
@@ -79,7 +79,7 @@ resource "aws_vpc_security_group_egress_rule" "nginx_sg_eg_all" {
   ip_protocol       = "-1"
 
   tags = {
-    Name = "${local.names.nginx_server_sg_egress_all}"
+    Name = local.names.nginx_server_sg_egress_all
   }
 }
 
@@ -87,11 +87,11 @@ resource "aws_vpc_security_group_egress_rule" "nginx_sg_eg_all" {
 # SSH key pair (only the public key is uploaded)
 # ---------------------------------------------------------------------------
 resource "aws_key_pair" "nginx_server_ssh_key" {
-  key_name   = "${local.names.nginx_server_ssh_key}"
+  key_name   = local.names.nginx_server_ssh_key
   public_key = file(var.ssh_public_key_path)
 
   tags = {
-    Name = "${local.names.nginx_server_ssh_key}"
+    Name = local.names.nginx_server_ssh_key
   }
 }
 
@@ -118,12 +118,12 @@ resource "aws_instance" "nginx_server" {
     encrypted   = true
 
     tags = {
-      Name = "${local.names.nginx_server_root_volume}"
+      Name = local.names.nginx_server_root_volume
     }
   }
 
   tags = {
-    Name = "${local.names.nginx_server}"
+    Name = local.names.nginx_server
   }
 
   lifecycle {
