@@ -90,7 +90,7 @@ terraform destroy
 | `aws_profile` | AWS CLI profile (`null` = default credentials) | `null` |
 | `owner` | Owner of the resources (`Owner` tag) | **required** |
 | `team` | Team responsible for the resources (`Team` tag) | **required** |
-| `project` | Project name: `Project` tag and prefix for AWS resource names | `tfproject` |
+| `project` | Project name: `Project` tag and prefix for AWS resource names | `iac01` |
 | `environment` | `dev` or `prod` | `dev` |
 | `instance_type` | `t3.micro` or `t3.small` | `t3.micro` |
 | `ssh_public_key_path` | Path to the SSH public key | `nginx-server.key.pub` |
