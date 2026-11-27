@@ -10,15 +10,14 @@ variable "aws_profile" {
   default     = null
 }
 
-variable "project_name" {
-  description = "Short project name, used as a prefix for AWS resource names"
+variable "owner" {
+  description = "Owner of the resources"
   type        = string
-  default     = "tfproject"
+}
 
-  validation {
-    condition     = can(regex("^[a-z0-9-]+$", var.project_name))
-    error_message = "Only lowercase letters, numbers and hyphens are allowed (it is used in AWS resource names)."
-  }
+variable "team" {
+  description = "Team responsible for the resources"
+  type        = string
 }
 
 variable "environment" {
@@ -29,6 +28,17 @@ variable "environment" {
   validation {
     condition     = contains(["dev", "prod"], var.environment)
     error_message = "environment must be \"dev\" or \"prod\"."
+  }
+}
+
+variable "project" {
+  description = "Short project name, used as a prefix for AWS resource names"
+  type        = string
+  default     = "tfproject"
+
+  validation {
+    condition     = can(regex("^[a-z0-9-]+$", var.project))
+    error_message = "Only lowercase letters, numbers and hyphens are allowed (it is used in AWS resource names)."
   }
 }
 

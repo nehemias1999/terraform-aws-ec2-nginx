@@ -5,9 +5,10 @@ provider "aws" {
   # Tags automatically added to ALL resources
   default_tags {
     tags = {
-      Project     = var.project_name
+      Owner       = var.owner
+      Team        = var.team
       Environment = var.environment
-      ManagedBy   = "terraform"
+      Project     = var.project
     }
   }
 }

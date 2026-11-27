@@ -1,6 +1,6 @@
 locals {
   # Prefix for resource names in AWS: <project>-<environment>
-  name_prefix = "${var.project_name}-${var.environment}"
+  name_prefix = "${var.project}-${var.environment}"
 }
 
 # ---------------------------------------------------------------------------
@@ -25,17 +25,17 @@ data "aws_ami" "al2023" {
 # ---------------------------------------------------------------------------
 # Security group + rules (each rule as a separate resource)
 # ---------------------------------------------------------------------------
-resource "aws_security_group" "nginx" {
-  name        = "${local.name_prefix}-nginx"
+resource "aws_security_group" "nginx_sg" {
+  name        = "${local.name_prefix}-nginx-sg"
   description = "SSH and HTTP for the nginx server"
 
   tags = {
-    Name = "${local.name_prefix}-nginx"
+    Name = "${local.name_prefix}-nginx-sg"
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "nginx_ssh" {
-  security_group_id = aws_security_group.nginx.id
+resource "aws_vpc_security_group_ingress_rule" "nginx_sg_in_ssh" {
+  security_group_id = aws_security_group.nginx_sg.id
   description       = "SSH"
   cidr_ipv4         = var.allowed_ssh_cidr
   from_port         = 22
@@ -43,8 +43,8 @@ resource "aws_vpc_security_group_ingress_rule" "nginx_ssh" {
   ip_protocol       = "tcp"
 }
 
-resource "aws_vpc_security_group_ingress_rule" "nginx_http" {
-  security_group_id = aws_security_group.nginx.id
+resource "aws_vpc_security_group_ingress_rule" "nginx_sg_in_http" {
+  security_group_id = aws_security_group.nginx_sg.id
   description       = "HTTP"
   cidr_ipv4         = var.allowed_http_cidr
   from_port         = 80
@@ -53,8 +53,8 @@ resource "aws_vpc_security_group_ingress_rule" "nginx_http" {
 }
 
 # Without this rule the instance cannot reach the internet to download nginx
-resource "aws_vpc_security_group_egress_rule" "nginx_all" {
-  security_group_id = aws_security_group.nginx.id
+resource "aws_vpc_security_group_egress_rule" "nginx_sg_eg_all" {
+  security_group_id = aws_security_group.nginx_sg.id
   description       = "All outbound traffic"
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
@@ -63,8 +63,8 @@ resource "aws_vpc_security_group_egress_rule" "nginx_all" {
 # ---------------------------------------------------------------------------
 # SSH key pair (only the public key is uploaded)
 # ---------------------------------------------------------------------------
-resource "aws_key_pair" "nginx_server" {
-  key_name   = "${local.name_prefix}-nginx"
+resource "aws_key_pair" "nginx_server_ssh_key" {
+  key_name   = "${local.name_prefix}-nginx-ssh-key"
   public_key = file(var.ssh_public_key_path)
 }
 
@@ -74,8 +74,8 @@ resource "aws_key_pair" "nginx_server" {
 resource "aws_instance" "nginx_server" {
   ami                    = data.aws_ami.al2023.id
   instance_type          = var.instance_type
-  key_name               = aws_key_pair.nginx_server.key_name
-  vpc_security_group_ids = [aws_security_group.nginx.id]
+  key_name               = aws_key_pair.nginx_server_ssh_key.key_name
+  vpc_security_group_ids = [aws_security_group.nginx_sg.id]
 
   user_data                   = file("${path.module}/user_data.sh")
   user_data_replace_on_change = true
@@ -92,7 +92,7 @@ resource "aws_instance" "nginx_server" {
   }
 
   tags = {
-    Name = "${local.name_prefix}-nginx"
+    Name = "${local.name_prefix}-nginx-server"
   }
 
   lifecycle {

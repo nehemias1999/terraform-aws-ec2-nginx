@@ -1,9 +1,12 @@
 # Copy to terraform.tfvars and adjust. terraform.tfvars is NOT committed.
+
 aws_region          = "us-east-2"
 # aws_profile       = "my-profile"
-project_name        = "tfproject"
+owner               = "nehemiassala@gmail.com"
+team                = "devops"
 environment         = "dev"
+project             = "terraform-aws-ec2-nginx"
 instance_type       = "t3.micro"
 ssh_public_key_path = "nginx-server.key.pub"
-allowed_ssh_cidr    = "YOUR_PUBLIC_IP/32" # e.g. 181.10.20.30/32
+allowed_ssh_cidr    = "YOUR_PUBLIC_IP/32" # curl https://checkip.amazonaws.com 
 allowed_http_cidr   = "0.0.0.0/0"
