@@ -1,0 +1,5 @@
+# LF line endings for files that run or are read on Linux
+*.sh text eol=lf
+*.tf text eol=lf
+*.tfvars* text eol=lf
+*.pub text eol=lf
