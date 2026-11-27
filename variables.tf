@@ -11,13 +11,23 @@ variable "aws_profile" {
 }
 
 variable "owner" {
-  description = "Owner of the resources"
+  description = "Owner of the resources (person or email), applied as the Owner tag"
   type        = string
+
+  validation {
+    condition     = length(trimspace(var.owner)) > 0
+    error_message = "owner cannot be empty."
+  }
 }
 
 variable "team" {
-  description = "Team responsible for the resources"
+  description = "Team responsible for the resources, applied as the Team tag"
   type        = string
+
+  validation {
+    condition     = length(trimspace(var.team)) > 0
+    error_message = "team cannot be empty."
+  }
 }
 
 variable "environment" {

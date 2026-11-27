@@ -31,7 +31,7 @@ flowchart LR
 - **Pinned versions** for Terraform and the provider, with `.terraform.lock.hcl` committed.
 - **Validated variables:** types, `validation` blocks, and no default for values the deployer must choose (the SSH CIDR).
 - **Dynamic AMI** through a `data` source instead of a hardcoded `ami-xxxx`.
-- **Consistent tags and naming:** `default_tags` on the provider and a `<project>-<environment>` prefix.
+- **Consistent tags and naming:** common tags (`Owner`, `Team`, `Environment`, `Project`, `ManagedBy`) through `default_tags` on the provider, and all resource names centralized in `locals.names` with a `<project>-<environment>` prefix. Each resource only sets its own `Name` tag, including the root EBS volume.
 - **Security:** IMDSv2 enforced, encrypted root volume, SSH restricted to one IP, only the **public** key is uploaded.
 - **No secrets in the repo:** state, `*.tfvars` and private keys are in `.gitignore`.
 
@@ -56,7 +56,10 @@ cp terraform.tfvars.example terraform.tfvars
 curl https://checkip.amazonaws.com   # your public IP
 ```
 
-Edit `terraform.tfvars` and set `allowed_ssh_cidr` to your IP with `/32`, e.g. `181.10.20.30/32`.
+Edit `terraform.tfvars` and set:
+
+- `owner` and `team`: used for the `Owner` and `Team` tags.
+- `allowed_ssh_cidr`: your IP with `/32`, e.g. `181.10.20.30/32`.
 
 **3. Deploy:**
 
@@ -85,7 +88,9 @@ terraform destroy
 |---|---|---|
 | `aws_region` | AWS region | `us-east-2` |
 | `aws_profile` | AWS CLI profile (`null` = default credentials) | `null` |
-| `project_name` | Prefix for AWS resource names | `tfproject` |
+| `owner` | Owner of the resources (`Owner` tag) | **required** |
+| `team` | Team responsible for the resources (`Team` tag) | **required** |
+| `project` | Project name: `Project` tag and prefix for AWS resource names | `tfproject` |
 | `environment` | `dev` or `prod` | `dev` |
 | `instance_type` | `t3.micro` or `t3.small` | `t3.micro` |
 | `ssh_public_key_path` | Path to the SSH public key | `nginx-server.key.pub` |
